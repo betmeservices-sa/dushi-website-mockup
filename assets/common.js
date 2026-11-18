@@ -18,14 +18,13 @@
 (function(){
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   var root=document.createElement('div');root.id='dwalk';root.setAttribute('aria-hidden','false');
-  root.innerHTML='<div class="dshadow"></div><button type="button" class="dw walk" aria-label="Dushi el Torogoz paseando. Tócalo para saludarlo"><img src="assets/dushi-camina.png" alt="" width="300" height="444"></button><div class="dsay" role="status" aria-live="polite"></div>';
+  root.innerHTML='<div class="dshadow"></div><button type="button" class="dw walk" aria-label="Dushi el Torogoz paseando. Tócalo para saludarlo"><span class="wsp"><img src="assets/dushi-camina-sheet.webp" alt="" width="3195" height="293"></span><img class="fly" src="assets/dushi-vuela.png" alt="" width="300" height="471"></button><div class="dsay" role="status" aria-live="polite"></div>';
   document.body.appendChild(root);
-  var dw=root.querySelector('.dw'),img=dw.querySelector('img'),sh=root.querySelector('.dshadow'),say=root.querySelector('.dsay');
-  var W=function(){return dw.offsetWidth||104},H=function(){return img.offsetHeight||150};
+  var dw=root.querySelector('.dw'),sh=root.querySelector('.dshadow'),say=root.querySelector('.dsay');
+  var W=function(){return dw.offsetWidth||104},H=function(){return dw.offsetHeight||143};
   var x=-W(),y=0,dir=1,mode='walk',vx=70,tx=0,ty=0,tmode=0,next=performance.now()+9000,last=performance.now(),talk=0;
   var lines=['¡Pura vida!','¿Playa o montaña?','Vámonos de feriado','¡Qué chido plan!','Pasa por Plaza Merliot','No olvides la hielera'];
-  function setMode(m){mode=m;dw.classList.toggle('walk',m==='walk');dw.classList.toggle('fly',m==='fly');
-    var src=m==='fly'?'assets/dushi-vuela.png':'assets/dushi-camina.png';if(img.getAttribute('src')!==src)img.setAttribute('src',src)}
+  function setMode(m){mode=m;dw.classList.toggle('walk',m==='walk');dw.classList.toggle('fly',m==='fly')}
   function pos(){var w=W(),h=H(),vw=innerWidth,flip=dir<0;
     dw.style.transform='translate('+x+'px,'+(-y)+'px) scaleX('+(flip?-1:1)+')';
     sh.style.transform='translate('+(x+w*.15)+'px,0)';sh.style.opacity=Math.max(.12,.9-y/260);
@@ -49,4 +48,23 @@
   setMode('walk');pos();requestAnimationFrame(frame);
   setTimeout(function(){speak('¡Hola! Soy Dushi',2600)},1500);
   addEventListener('resize',pos);
+})();
+
+/* Dushi en la hielera: extiende el brazo y levanta el pulgar (animación por cuadros) */
+(function(){
+  var cv=document.querySelectorAll('canvas.dz');if(!cv.length)return;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var img=new Image();img.src=cv[0].dataset.sheet;
+  img.onload=function(){cv.forEach(function(c){
+    var N=+c.dataset.frames,cols=+c.dataset.cols,w=c.width,h=c.height,x=c.getContext('2d'),f=0,playing=false,timer=0,vis=true;
+    function draw(i){var r=Math.floor(i/cols),k=i%cols;x.clearRect(0,0,w,h);x.drawImage(img,k*w,r*h,w,h,0,0,w,h)}
+    function play(){if(playing||reduce)return;playing=true;f=0;var t0=performance.now();
+      (function step(t){if(!playing)return;var i=Math.min(N-1,Math.floor((t-t0)/83));draw(i);
+        if(i>=N-1){playing=false;draw(0);schedule(3500);return}requestAnimationFrame(step)})(t0)}
+    function schedule(ms){clearTimeout(timer);timer=setTimeout(function(){if(vis&&!document.hidden)play();else schedule(1500)},ms)}
+    draw(reduce?26:0);
+    if(!reduce){schedule(1200);
+      var host=c.closest('button,.frame')||c;host.addEventListener('click',function(){play()});host.addEventListener('mouseenter',function(){play()});
+      if('IntersectionObserver' in window)new IntersectionObserver(function(e){vis=e[0].isIntersecting}).observe(c)}
+  })};
 })();

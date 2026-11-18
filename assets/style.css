@@ -502,33 +502,19 @@ body:has(dialog[open]){overflow:hidden}
 @media(max-width:800px){.mgrid{grid-template-columns:1fr}.mstage{order:-1;max-width:340px}.mtxt{text-align:left}}
 @media(prefers-reduced-motion:reduce){.mbird,.mshadow,.sunrays,.bubble{animation:none!important}}
 /* Dushi en la hielera: pulgar que se levanta */
-.dz{position:absolute;left:50%;bottom:3%;width:92%;aspect-ratio:640/638;transform:translateX(-50%);display:block}
-.dz img{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
-.dz-arm{transform-origin:37.3% 47.6%;animation:thumbup 5.5s ease-in-out infinite}
-.mbird.hop .dz-arm,.tzf .frame:hover .dz-arm{animation:thumbup 1.6s ease-in-out 1}
-@keyframes thumbup{
- 0%,8%{transform:rotate(-26deg)}
- 22%{transform:rotate(6deg)}
- 30%{transform:rotate(-2deg)}
- 36%{transform:rotate(2deg) scale(1.03)}
- 40%{transform:rotate(5deg) scale(1.05)}
- 44%{transform:rotate(1deg) scale(1.03)}
- 48%{transform:rotate(4deg) scale(1.04)}
- 60%{transform:rotate(0)}
- 76%,100%{transform:rotate(-26deg)}}
-@media(prefers-reduced-motion:reduce){.dz-arm{animation:none!important}}
-
-/* Dushi paseando por la página */
+.dz{position:absolute;left:50%;bottom:9%;width:104%;height:auto;aspect-ratio:300/255;transform:translateX(-47%);display:block}
 #dwalk{position:fixed;left:0;bottom:0;z-index:60;width:0;height:0;pointer-events:none}
 #dwalk .dw{position:absolute;left:0;bottom:0;width:104px;pointer-events:auto;cursor:pointer;background:none;border:0;padding:0;will-change:transform;-webkit-tap-highlight-color:transparent}
 #dwalk .dw:focus-visible{outline:3px solid var(--navy);outline-offset:3px;border-radius:12px}
-#dwalk img{display:block;width:100%;height:auto;transform-origin:50% 100%}
-#dwalk .dw.walk img{animation:stepw .5s ease-in-out infinite}
-#dwalk .dw.fly img{animation:flap .32s ease-in-out infinite}
-#dwalk .dw.hop img{animation:hopw .6s cubic-bezier(.3,1.6,.5,1)}
-@keyframes stepw{0%,100%{transform:translateY(0) rotate(-3deg)}25%{transform:translateY(-7px) rotate(0)}50%{transform:translateY(0) rotate(3deg)}75%{transform:translateY(-7px) rotate(0)}}
+#dwalk .fly{display:none;width:100%;height:auto;transform-origin:50% 100%}
+#dwalk .wsp{display:block;width:100%;aspect-ratio:213/293;overflow:hidden}
+#dwalk .wsp img{display:block;width:1500%;height:100%;max-width:none;animation:sprite 1.25s steps(15) infinite}
+@keyframes sprite{to{transform:translateX(-100%)}}
+#dwalk .dw.fly .wsp{display:none}
+#dwalk .dw.fly .fly{display:block;animation:flap .32s ease-in-out infinite}
+#dwalk .dw.hop{animation:hopw .6s cubic-bezier(.3,1.6,.5,1)}
 @keyframes flap{0%,100%{transform:translateY(0) rotate(-8deg) scale(1,1)}50%{transform:translateY(-9px) rotate(-14deg) scale(1.04,.94)}}
-@keyframes hopw{0%{transform:none}35%{transform:translateY(-24px) scale(.96,1.06)}100%{transform:none}}
+@keyframes hopw{0%,100%{margin-bottom:0}35%{margin-bottom:24px}}
 #dwalk .dsay{position:absolute;left:0;bottom:0;white-space:nowrap;background:#fff;color:var(--navy);border:2.5px solid var(--navy);border-radius:16px;padding:7px 12px;font-weight:800;font-size:13px;box-shadow:3px 3px 0 var(--navy);opacity:0;pointer-events:none;transition:opacity .2s;will-change:transform}
 #dwalk .dsay.on{opacity:1}
 #dwalk .dshadow{position:absolute;left:0;bottom:0;width:70px;height:9px;border-radius:50%;background:rgba(14,32,62,.22);will-change:transform;transition:opacity .2s}
