@@ -550,3 +550,17 @@ body:has(dialog[open]){overflow:hidden}
   #dworld .dsay{left:24px;bottom:96px;font-size:11px;padding:5px 9px}
   #dworld.away{transform:translateY(130%)}
 }
+
+/* ===== Dushi con gorro de Santa, flotando en su trineo ===== */
+#dworld .road{display:none}
+#dworld .dw{left:14px;bottom:18px;width:132px;animation:float 3.6s ease-in-out infinite;transform-origin:50% 90%}
+#dworld .dw .sled{display:block;width:100%;height:auto}
+#dworld .dw.hop{animation:hopw .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-12px) rotate(1.5deg)}}
+#dworld .sled-shadow{position:absolute;left:22px;bottom:6px;width:112px;height:10px;border-radius:50%;background:rgba(14,32,62,.28);animation:sledsh 3.6s ease-in-out infinite}
+@keyframes sledsh{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(.8);opacity:.5}}
+#dworld .ic{left:70px;bottom:42px;width:104px}
+#dworld .ic-b{left:70px}
+#dworld .dsay{left:40px;bottom:166px}
+#dworld.still .dw,#dworld.still .sled-shadow{animation:none}
+@media(max-width:700px){#dworld .dw{left:8px;bottom:12px;width:86px}#dworld .sled-shadow{left:14px;width:70px;height:8px;bottom:4px}#dworld .ic{left:44px;bottom:28px;width:70px}#dworld .ic-b{left:44px}#dworld .dsay{left:20px;bottom:112px}}
