@@ -20,9 +20,10 @@
   var root=document.createElement('div');root.id='dworld';if(reduce)root.classList.add('still');
   root.innerHTML='<div class="stage"><svg class="lights" viewBox="0 0 280 200" aria-hidden="true"><path class="lh" d="M-4 16C46 128 118 118 170 80S252 70 284 118" fill="none"/><path class="lw" d="M-4 16C46 128 118 118 170 80S252 70 284 118" fill="none"/><g class="lb"></g></svg><div class="sled-shadow"></div><button type="button" class="dw" aria-label="Dushi el Torogoz con gorro de Santa, flotando en su trineo. Tócalo para saludarlo"><img class="sled" src="assets/dushi-trineo.webp" alt="" width="520" height="528"></button></div><div class="dsay" role="status" aria-live="polite"></div>';
   document.body.appendChild(root);
-  (function(){var p=root.querySelector('.lw'),g=root.querySelector('.lb'),L=p.getTotalLength(),n=9,C=['#FCA62A','#F96C4F','#0E203E','#1A9E9C'],s='';
-    for(var i=0;i<n;i++){var pt=p.getPointAtLength(L*(i+.5)/n),a=p.getPointAtLength(Math.min(L,L*(i+.5)/n+2)),ang=Math.atan2(a.y-pt.y,a.x-pt.x)*180/Math.PI;
+  (function(){var p=root.querySelector('.lw'),g=root.querySelector('.lb'),L=p.getTotalLength(),n=8,D=9,C=['#FCA62A','#F96C4F','#0E203E','#1A9E9C'],s='';
+    for(var i=0;i<n;i++){var pt=p.getPointAtLength(L*(i+.5)/D),a=p.getPointAtLength(Math.min(L,L*(i+.5)/D+2)),ang=Math.atan2(a.y-pt.y,a.x-pt.x)*180/Math.PI;
       s+='<g class="b b'+(i%4)+'" transform="translate('+pt.x.toFixed(1)+' '+pt.y.toFixed(1)+') rotate('+(ang*.3).toFixed(1)+')"><circle class="gl" cx="0" cy="9" r="11" fill="'+C[i%4]+'"/><path d="M-5 4Q-5 14 0 15Q5 14 5 4Z" fill="#F3E6CF" stroke="#F3E6CF" stroke-width="5" stroke-linejoin="round"/><rect x="-2.6" y="-1" width="5.2" height="5" rx="1.2" fill="#0E203E"/><path d="M-5 4Q-5 14 0 15Q5 14 5 4Z" fill="'+C[i%4]+'" stroke="#0E203E" stroke-width="1.6" stroke-linejoin="round"/></g>'}
+    root.querySelectorAll('.lw,.lh').forEach(function(e){e.style.strokeDasharray=(L*(n-.35)/D).toFixed(1)+' '+L.toFixed(1)});
     g.innerHTML=s})();
   var dw=root.querySelector('.dw'),say=root.querySelector('.dsay');
   var lines=['¡Felices fiestas!','¡Pura vida!','¿Playa o montaña?','Vámonos de feriado','¡Todo Dushi!','Pasa por Plaza Merliot','No olvides la hielera'],t=0;
