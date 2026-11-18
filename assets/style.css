@@ -564,3 +564,16 @@ body:has(dialog[open]){overflow:hidden}
 #dworld .dsay{left:40px;bottom:166px}
 #dworld.still .dw,#dworld.still .sled-shadow{animation:none}
 @media(max-width:700px){#dworld .dw{left:8px;bottom:12px;width:86px}#dworld .sled-shadow{left:14px;width:70px;height:8px;bottom:4px}#dworld .ic{left:44px;bottom:28px;width:70px}#dworld .ic-b{left:44px}#dworld .dsay{left:20px;bottom:112px}}
+
+/* luces de Navidad detrás de Dushi (reemplazan los iconos) */
+#dworld .ic{display:none!important}
+#dworld{height:210px}
+#dworld .lights{position:absolute;left:0;bottom:0;width:280px;height:200px;overflow:visible}
+#dworld .lh{stroke:#F3E6CF;stroke-width:5.6;stroke-linecap:round}
+#dworld .lw{stroke:#0E203E;stroke-width:2.4;stroke-linecap:round}
+#dworld .gl{opacity:0;animation:glow 2.4s ease-in-out infinite}
+#dworld .b1 .gl{animation-delay:.6s}#dworld .b2 .gl{animation-delay:1.2s}#dworld .b3 .gl{animation-delay:1.8s}
+@keyframes glow{0%,100%{opacity:0}50%{opacity:.35}}
+#dworld.still .gl{animation:none}
+#dworld .dsay{bottom:176px}
+@media(max-width:700px){#dworld{height:150px}#dworld .lights{width:190px;height:136px}#dworld .dsay{bottom:130px}}
