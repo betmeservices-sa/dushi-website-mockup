@@ -50,13 +50,3 @@
       if('IntersectionObserver' in window)new IntersectionObserver(function(e){vis=e[0].isIntersecting}).observe(c)}
   })};
 })();
-
-/* Temporada navideña: guirnalda de luces en el encabezado (poner XMAS=false para quitarla) */
-(function(){
-  var XMAS=true;if(!XMAS)return;
-  document.documentElement.classList.add('xmas');
-  var h=document.querySelector('header');if(!h)return;
-  var g=document.createElement('div');g.className='garland';g.setAttribute('aria-hidden','true');
-  g.innerHTML='<i class="gw"></i><i class="gb a"></i><i class="gb b"></i><i class="gb c"></i><i class="gb d"></i>';
-  h.insertBefore(g,h.firstChild);
-})();

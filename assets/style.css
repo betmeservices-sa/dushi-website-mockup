@@ -550,20 +550,3 @@ body:has(dialog[open]){overflow:hidden}
   #dworld .dsay{left:24px;bottom:96px;font-size:11px;padding:5px 9px}
   #dworld.away{transform:translateY(130%)}
 }
-
-/* ===== Navidad: guirnalda de luces (solo con html.xmas) ===== */
-.promo .xm{display:none}
-.xmas .promo .xm{display:inline-flex;align-items:center;gap:6px}
-.garland{display:none;position:relative;height:33px;overflow:hidden;pointer-events:none;transition:height .3s var(--ease)}
-.xmas .garland{display:block}
-.garland i{position:absolute;inset:0;background-repeat:repeat-x;background-position:0 0;background-size:220px 36px}
-.garland .gw{background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='26' viewBox='0 0 160 26'%3E%3Cpath d='M0 5Q80 23 160 5' fill='none' stroke='%230E203E' stroke-width='1.8'/%3E%3C/svg%3E")}
-.garland .gb.a{background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='26' viewBox='0 0 160 26'%3E%3Cg transform='translate(20 8.9)'%3E%3Crect x='-2' y='-1' width='4' height='4' rx='1' fill='%230E203E'/%3E%3Cpath d='M-4.2 3Q-4.2 11 0 11.5Q4.2 11 4.2 3Z' fill='%23FCA62A' stroke='%230E203E' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E")}
-.garland .gb.b{background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='26' viewBox='0 0 160 26'%3E%3Cg transform='translate(60 13.4)'%3E%3Crect x='-2' y='-1' width='4' height='4' rx='1' fill='%230E203E'/%3E%3Cpath d='M-4.2 3Q-4.2 11 0 11.5Q4.2 11 4.2 3Z' fill='%23F96C4F' stroke='%230E203E' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E")}
-.garland .gb.c{background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='26' viewBox='0 0 160 26'%3E%3Cg transform='translate(100 13.4)'%3E%3Crect x='-2' y='-1' width='4' height='4' rx='1' fill='%230E203E'/%3E%3Cpath d='M-4.2 3Q-4.2 11 0 11.5Q4.2 11 4.2 3Z' fill='%230E203E' stroke='%230E203E' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E")}
-.garland .gb.d{background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='26' viewBox='0 0 160 26'%3E%3Cg transform='translate(140 8.9)'%3E%3Crect x='-2' y='-1' width='4' height='4' rx='1' fill='%230E203E'/%3E%3Cpath d='M-4.2 3Q-4.2 11 0 11.5Q4.2 11 4.2 3Z' fill='%231A9E9C' stroke='%230E203E' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E")}
-.garland .gb{animation:twinkle 2.4s ease-in-out infinite}
-.garland .gb.b{animation-delay:.6s}.garland .gb.c{animation-delay:1.2s}.garland .gb.d{animation-delay:1.8s}
-@keyframes twinkle{0%,100%{opacity:1}50%{opacity:.55}}
-.xmas header.stuck .garland{height:0}
-@media(prefers-reduced-motion:reduce){.garland .gb{animation:none}}
