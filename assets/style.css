@@ -365,8 +365,8 @@ form.search{margin:0}
 .pg-hero h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--sol) 62% 92%,transparent 92%)}
 .pg-hero p.lead{font-size:clamp(16px,1.5vw,19px);max-width:48ch;margin:0 0 26px;font-weight:500}
 .tzf{position:relative;max-width:520px;margin-inline:auto;width:100%}
-.tzf .frame{border-radius:999px 999px 28px 28px;overflow:hidden;border:3px solid var(--navy);background:var(--sol);aspect-ratio:1/1.02}
-.tzf .frame img{width:100%;height:100%;object-fit:cover;display:block;animation:floaty 6s ease-in-out infinite}
+.tzf .frame{position:relative;border-radius:999px 999px 28px 28px;overflow:hidden;border:3px solid var(--navy);background:var(--sol);aspect-ratio:1/1.02}
+
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .tzf .sticker-lbl{position:absolute;left:-10px;bottom:22px;background:var(--navy);color:var(--sol);font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:9px 14px;border-radius:999px;transform:rotate(-5deg)}
 .crumbs{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
@@ -490,20 +490,47 @@ body:has(dialog[open]){overflow:hidden}
 .sunrays{position:absolute;left:50%;top:58%;width:118%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:repeating-conic-gradient(var(--sol) 0 8deg,transparent 8deg 24deg);opacity:.22;animation:rays 40s linear infinite;-webkit-mask-image:radial-gradient(circle,#000 30%,transparent 68%);mask-image:radial-gradient(circle,#000 30%,transparent 68%)}
 @keyframes rays{to{transform:translate(-50%,-50%) rotate(360deg)}}
 .mbird{position:relative;display:block;width:100%;padding:0;border:3px solid var(--navy);border-radius:999px 999px 28px 28px;overflow:hidden;background:var(--sol);cursor:pointer;aspect-ratio:1/1.02;animation:bob 4.5s ease-in-out infinite;transform-origin:50% 100%;-webkit-tap-highlight-color:transparent}
-.mbird img{width:100%;height:100%;object-fit:cover;display:block;transform-origin:30% 35%;animation:thumb 4.5s ease-in-out infinite}
 .mbird:focus-visible{outline:3px solid var(--navy);outline-offset:4px}
 .mbird.hop{animation:hop .7s cubic-bezier(.3,1.6,.5,1)}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-12px) rotate(1.5deg)}}
-@keyframes thumb{0%,70%,100%{transform:rotate(0) scale(1)}78%{transform:rotate(-3deg) scale(1.04)}86%{transform:rotate(2deg) scale(1.04)}}
 @keyframes hop{0%{transform:translateY(0) scaleY(1)}25%{transform:translateY(6px) scaleY(.94)}55%{transform:translateY(-34px) scaleY(1.04) rotate(-3deg)}100%{transform:translateY(0) scaleY(1)}}
 .mshadow{width:60%;height:16px;margin:14px auto 0;border-radius:50%;background:rgba(14,32,62,.18);animation:sh 4.5s ease-in-out infinite}
 @keyframes sh{0%,100%{transform:scaleX(1);opacity:1}50%{transform:scaleX(.82);opacity:.55}}
 .bubble{position:absolute;z-index:2;top:0;right:2%;max-width:240px;background:#fff;color:var(--navy);border:3px solid var(--navy);border-radius:22px;padding:11px 16px;font-weight:800;font-size:15px;line-height:1.25;box-shadow:4px 4px 0 var(--navy);transform-origin:20% 100%;animation:bub .5s cubic-bezier(.3,1.6,.5,1)}
 .bubble::after{content:"";position:absolute;left:26px;bottom:-14px;width:18px;height:18px;background:#fff;border-right:3px solid var(--navy);border-bottom:3px solid var(--navy);transform:rotate(45deg)}
 @keyframes bub{from{opacity:0;transform:scale(.6) rotate(-4deg)}to{opacity:1;transform:none}}
-.pstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:36px;max-width:900px;margin-inline:auto}
-.pstrip i{display:block;aspect-ratio:268/460;background:url(torogoz-poses.jpg) no-repeat;background-size:500% 100%;animation:step 5s ease-in-out infinite;transform-origin:50% 100%}
-.pstrip i:nth-child(2){animation-delay:.4s}.pstrip i:nth-child(3){animation-delay:.8s}.pstrip i:nth-child(4){animation-delay:1.2s}.pstrip i:nth-child(5){animation-delay:1.6s}
-@keyframes step{0%,22%,100%{transform:translateY(0)}8%{transform:translateY(-14px) rotate(-2deg)}15%{transform:translateY(0) rotate(1deg)}}
 @media(max-width:800px){.mgrid{grid-template-columns:1fr}.mstage{order:-1;max-width:340px}.mtxt{text-align:left}}
-@media(prefers-reduced-motion:reduce){.mbird,.mbird img,.mshadow,.sunrays,.pstrip i,.bubble{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.mbird,.mshadow,.sunrays,.bubble{animation:none!important}}
+/* Dushi en la hielera: pulgar que se levanta */
+.dz{position:absolute;left:50%;bottom:3%;width:92%;aspect-ratio:640/638;transform:translateX(-50%);display:block}
+.dz img{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.dz-arm{transform-origin:37.3% 47.6%;animation:thumbup 5.5s ease-in-out infinite}
+.mbird.hop .dz-arm,.tzf .frame:hover .dz-arm{animation:thumbup 1.6s ease-in-out 1}
+@keyframes thumbup{
+ 0%,8%{transform:rotate(-26deg)}
+ 22%{transform:rotate(6deg)}
+ 30%{transform:rotate(-2deg)}
+ 36%{transform:rotate(2deg) scale(1.03)}
+ 40%{transform:rotate(5deg) scale(1.05)}
+ 44%{transform:rotate(1deg) scale(1.03)}
+ 48%{transform:rotate(4deg) scale(1.04)}
+ 60%{transform:rotate(0)}
+ 76%,100%{transform:rotate(-26deg)}}
+@media(prefers-reduced-motion:reduce){.dz-arm{animation:none!important}}
+
+/* Dushi paseando por la página */
+#dwalk{position:fixed;left:0;bottom:0;z-index:60;width:0;height:0;pointer-events:none}
+#dwalk .dw{position:absolute;left:0;bottom:0;width:104px;pointer-events:auto;cursor:pointer;background:none;border:0;padding:0;will-change:transform;-webkit-tap-highlight-color:transparent}
+#dwalk .dw:focus-visible{outline:3px solid var(--navy);outline-offset:3px;border-radius:12px}
+#dwalk img{display:block;width:100%;height:auto;transform-origin:50% 100%}
+#dwalk .dw.walk img{animation:stepw .5s ease-in-out infinite}
+#dwalk .dw.fly img{animation:flap .32s ease-in-out infinite}
+#dwalk .dw.hop img{animation:hopw .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes stepw{0%,100%{transform:translateY(0) rotate(-3deg)}25%{transform:translateY(-7px) rotate(0)}50%{transform:translateY(0) rotate(3deg)}75%{transform:translateY(-7px) rotate(0)}}
+@keyframes flap{0%,100%{transform:translateY(0) rotate(-8deg) scale(1,1)}50%{transform:translateY(-9px) rotate(-14deg) scale(1.04,.94)}}
+@keyframes hopw{0%{transform:none}35%{transform:translateY(-24px) scale(.96,1.06)}100%{transform:none}}
+#dwalk .dsay{position:absolute;left:0;bottom:0;white-space:nowrap;background:#fff;color:var(--navy);border:2.5px solid var(--navy);border-radius:16px;padding:7px 12px;font-weight:800;font-size:13px;box-shadow:3px 3px 0 var(--navy);opacity:0;pointer-events:none;transition:opacity .2s;will-change:transform}
+#dwalk .dsay.on{opacity:1}
+#dwalk .dshadow{position:absolute;left:0;bottom:0;width:70px;height:9px;border-radius:50%;background:rgba(14,32,62,.22);will-change:transform;transition:opacity .2s}
+@media(max-width:700px){#dwalk .dw{width:76px}#dwalk .dshadow{width:50px}}
+@media(prefers-reduced-motion:reduce){#dwalk{display:none}}
