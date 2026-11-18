@@ -532,3 +532,12 @@ body:has(dialog[open]){overflow:hidden}
 #dworld .ic.on .nm{opacity:1;transform:none}
 #dworld .ic svg{filter:drop-shadow(2px 0 0 #F3E6CF) drop-shadow(-2px 0 0 #F3E6CF) drop-shadow(0 2px 0 #F3E6CF) drop-shadow(0 -2px 0 #F3E6CF)}
 @media(max-width:700px){#dworld .ic .nm{font-size:9px;margin-left:-38px;bottom:-16px}}
+
+/* lugares: fotos pequeñas detrás de Dushi */
+#dworld .ic{left:62px;bottom:22px;width:176px;aspect-ratio:4/3;border-radius:18px;border:3px solid #0E203E;box-shadow:0 0 0 2.5px #F3E6CF;background:#0E203E}
+#dworld .ic.ic-b{left:62px}
+#dworld .ic img{display:block;width:100%;height:100%;object-fit:cover;border-radius:14px}
+#dworld .ic .nm{left:50%;bottom:-22px;margin-left:-46px}
+@media(max-width:700px){#dworld .ic,#dworld .ic.ic-b{left:42px;bottom:16px;width:132px;border-radius:14px}#dworld .ic img{border-radius:10px}}
+#dworld .ic .nm{top:-13px;bottom:auto;left:auto;right:10px;margin:0}
+@media(max-width:700px){#dworld .ic .nm{top:-11px;right:6px}}
