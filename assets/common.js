@@ -27,6 +27,9 @@
   dw.addEventListener('animationend',function(e){if(e.animationName==='hopw')dw.classList.remove('hop')});
   if(!reduce)setInterval(function(){if(document.hidden)return;sc[cur].classList.remove('on');cur=(cur+1)%sc.length;sc[cur].classList.add('on')},9000);
   setTimeout(function(){speak('¡Hola! Soy Dushi')},1500);
+  // móvil: se esconde mientras se hace scroll y vuelve al detenerse
+  var mq=window.matchMedia&&matchMedia('(max-width: 700px)'),st=0;
+  addEventListener('scroll',function(){if(!mq||!mq.matches)return;root.classList.add('away');clearTimeout(st);st=setTimeout(function(){root.classList.remove('away')},1400)},{passive:true});
 })();
 
 /* Dushi en la hielera: extiende el brazo y levanta el pulgar (animación por cuadros) */

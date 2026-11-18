@@ -538,3 +538,15 @@ body:has(dialog[open]){overflow:hidden}
   .s-video .btn{padding-block:12px}
   .s-video .cta{gap:10px}
 }
+
+/* móvil: mascota más pequeña y discreta; se esconde mientras se hace scroll */
+#dworld{transition:transform .4s cubic-bezier(.3,1,.4,1)}
+@media(max-width:700px){
+  #dworld{width:160px;height:92px}
+  #dworld .road{width:150px;height:10px}
+  #dworld .ic{left:6px;bottom:18px;width:80px}
+  #dworld .ic.on{opacity:.6}
+  #dworld .dw{left:22px;bottom:7px;width:48px}
+  #dworld .dsay{left:24px;bottom:96px;font-size:11px;padding:5px 9px}
+  #dworld.away{transform:translateY(130%)}
+}
