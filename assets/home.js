@@ -116,3 +116,12 @@
   [].forEach.call(slides,function(s){[].forEach.call(s.querySelectorAll('.wrap>div:first-child>*'),function(el,k){el.style.setProperty('--k',k)})});
   if(reduce){playing=false;setPlay(false)}else go(0);
 })();
+
+/* mascota Dushi: frases al tocarla */
+(function(){var b=document.getElementById('mbird'),bub=document.getElementById('bubble');if(!b||!bub)return;
+  var f=['¡Pura vida!','¿Playa o montaña?','No olvides la hielera','¡Chivo! Vámonos de feriado','Tu próxima vacación empieza aquí','Pasa por Plaza Merliot, tercer nivel','¡Qué chido plan!'],i=0;
+  function say(t){bub.textContent=t;bub.style.animation='none';void bub.offsetWidth;bub.style.animation=''}
+  b.addEventListener('click',function(){i=(i+1)%f.length;say(f[i]);b.classList.remove('hop');void b.offsetWidth;b.classList.add('hop')});
+  b.addEventListener('animationend',function(e){if(e.animationName==='hop')b.classList.remove('hop')});
+  setInterval(function(){if(document.hidden)return;i=(i+1)%f.length;say(f[i])},6000);
+})();
