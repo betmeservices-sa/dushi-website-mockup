@@ -114,6 +114,7 @@ function normalizar(p) {
   return {
     id: p.id, sku: p.sku, nombre: p.name, marca: p.brand?.name || '', categoria: p.category?.name || '',
     precio: p.price?.amount, precioAnterior: null, disponible: !!p.available, variantes,
+    descripcion: String(p.description || p.shortDescription || '').trim().slice(0, 600),
     planes: plan ? [plan] : [], generos: generos.length ? generos : ['all'],
     imagen: urlImagen(p.images?.[0]) || urlImagen(p.variants?.find((v) => v.images?.length)?.images[0]),
   };
@@ -141,7 +142,7 @@ function vistaProductoReal(p) {
   const m = META[p.sku] || {};
   const tallas = [...new Set(p.variantes.map((v) => v.talla).filter((t) => t && !/^(UNI|MULTI)TALLA$/.test(t)))];
   return {
-    sku: p.sku, nombre: p.nombre, marca: p.marca, categoria: p.categoria,
+    sku: p.sku, nombre: p.nombre, marca: p.marca, categoria: p.categoria, descripcion: p.descripcion || '',
     precio: p.precio, precioAnterior: null, descuentoPct: 0,
     disponible: p.disponible, tallas, variantes: p.variantes.map((v) => ({ codigo: v.codigo, talla: v.talla, color: v.color, disponible: v.disponible })),
     imagen: p.imagen || m.imagen || null, bg: m.bg || '#F3E6CF', planes: p.planes, generos: p.generos,
@@ -168,7 +169,7 @@ function vistaProducto(p) {
   const desc = p.precioAnterior && p.precioAnterior > p.precio ? Math.floor((1 - p.precio / p.precioAnterior) * 100) : 0;
   const tallas = [...new Set(p.variantes.map((v) => v.talla).filter((t) => t && t !== 'Única'))];
   return {
-    sku: p.sku, nombre: p.nombre, marca: p.marca, categoria: p.categoria,
+    sku: p.sku, nombre: p.nombre, marca: p.marca, categoria: p.categoria, descripcion: p.descripcion || '',
     precio: p.precio, precioAnterior: p.precioAnterior, descuentoPct: desc,
     disponible: st ? st.disponible : 0, tallas, variantes: vars,
     imagen: m.imagen || null, bg: m.bg || '#F3E6CF', planes: m.planes || [], generos: m.generos || ['all'],

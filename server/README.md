@@ -34,7 +34,7 @@ Ayudas que existen **solo en el mock**: `POST /_mock/facturar/{pedido}` (simula 
 ## Pendiente (no está hecho)
 
 - Pasarela de pago real: `cobrar()` en `web-backend.js` es una simulación que siempre aprueba.
-- Carrito y checkout en la interfaz (hoy «Agregar» solo suma el contador).
+- Checkout en la interfaz: el carrito ya existe (se guarda en el navegador, `assets/cart.js`), pero «Finalizar compra» todavía solo avisa que el pago llega pronto; falta conectarlo a `/api/pedidos`.
 - Autenticación para consultar pedidos, y datos de Crédito Fiscal (NIT, NRC) si se piden en el checkout.
 - Entregas: la propuesta de VELARIS las deja fuera.
 
