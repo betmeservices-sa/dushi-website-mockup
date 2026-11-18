@@ -18,11 +18,11 @@
 (function(){
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   var root=document.createElement('div');root.id='dwalk';root.setAttribute('aria-hidden','false');
-  root.innerHTML='<div class="dshadow"></div><button type="button" class="dw walk" aria-label="Dushi el Torogoz paseando. Tócalo para saludarlo"><span class="wsp"><img src="assets/dushi-camina-sheet.webp" alt="" width="3195" height="293"></span><img class="fly" src="assets/dushi-vuela.png" alt="" width="300" height="471"></button><div class="dsay" role="status" aria-live="polite"></div>';
+  root.innerHTML='<div class="dshadow"></div><button type="button" class="dw walk" aria-label="Dushi el Torogoz paseando. Tócalo para saludarlo"><span class="wsp"><img src="assets/dushi3d-camina.webp" alt="" width="7680" height="330"></span><span class="fsp"><img src="assets/dushi3d-vuela.webp" alt="" width="8000" height="160"></span></button><div class="dsay" role="status" aria-live="polite"></div>';
   document.body.appendChild(root);
   var dw=root.querySelector('.dw'),sh=root.querySelector('.dshadow'),say=root.querySelector('.dsay');
-  var W=function(){return dw.offsetWidth||104},H=function(){return dw.offsetHeight||143};
-  var x=-W(),y=0,dir=1,mode='walk',vx=70,tx=0,ty=0,tmode=0,next=performance.now()+9000,last=performance.now(),talk=0;
+  var W=function(){return dw.offsetWidth||120},H=function(){return dw.offsetHeight>40?dw.offsetHeight:(mode==='fly'?125:165)};
+  var x=-W(),y=0,dir=1,mode='walk',vx=58,tx=0,ty=0,tmode=0,next=performance.now()+9000,last=performance.now(),talk=0;
   var lines=['¡Pura vida!','¿Playa o montaña?','Vámonos de feriado','¡Qué chido plan!','Pasa por Plaza Merliot','No olvides la hielera'];
   function setMode(m){mode=m;dw.classList.toggle('walk',m==='walk');dw.classList.toggle('fly',m==='fly')}
   function pos(){var w=W(),h=H(),vw=innerWidth,flip=dir<0;

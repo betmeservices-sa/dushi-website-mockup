@@ -502,21 +502,24 @@ body:has(dialog[open]){overflow:hidden}
 @media(max-width:800px){.mgrid{grid-template-columns:1fr}.mstage{order:-1;max-width:340px}.mtxt{text-align:left}}
 @media(prefers-reduced-motion:reduce){.mbird,.mshadow,.sunrays,.bubble{animation:none!important}}
 /* Dushi en la hielera: pulgar que se levanta */
-.dz{position:absolute;left:50%;bottom:9%;width:104%;height:auto;aspect-ratio:300/255;transform:translateX(-47%);display:block}
+.dz{position:absolute;left:0;bottom:0;width:100%;height:auto;aspect-ratio:520/330;display:block}
+.mbird,.tzf .frame{aspect-ratio:1/.8!important}
 #dwalk{position:fixed;left:0;bottom:0;z-index:60;width:0;height:0;pointer-events:none}
-#dwalk .dw{position:absolute;left:0;bottom:0;width:104px;pointer-events:auto;cursor:pointer;background:none;border:0;padding:0;will-change:transform;-webkit-tap-highlight-color:transparent}
+#dwalk .dw{position:absolute;left:0;bottom:0;width:120px;pointer-events:auto;cursor:pointer;background:none;border:0;padding:0;will-change:transform;-webkit-tap-highlight-color:transparent}
 #dwalk .dw:focus-visible{outline:3px solid var(--navy);outline-offset:3px;border-radius:12px}
-#dwalk .fly{display:none;width:100%;height:auto;transform-origin:50% 100%}
-#dwalk .wsp{display:block;width:100%;aspect-ratio:213/293;overflow:hidden}
-#dwalk .wsp img{display:block;width:1500%;height:100%;max-width:none;animation:sprite 1.25s steps(15) infinite}
+#dwalk .wsp,#dwalk .fsp{display:block;width:100%;overflow:hidden}
+#dwalk .wsp{aspect-ratio:240/330}
+#dwalk .fsp{display:none;aspect-ratio:200/160;width:128%;margin-left:-14%}
+#dwalk .wsp img{display:block;width:3200%;height:100%;max-width:none;animation:sprite 2.67s steps(32) infinite}
+#dwalk .fsp img{display:block;width:4000%;height:100%;max-width:none;animation:sprite 1.667s steps(40) infinite}
 @keyframes sprite{to{transform:translateX(-100%)}}
 #dwalk .dw.fly .wsp{display:none}
-#dwalk .dw.fly .fly{display:block;animation:flap .32s ease-in-out infinite}
+#dwalk .dw.fly .fsp{display:block}
 #dwalk .dw.hop{animation:hopw .6s cubic-bezier(.3,1.6,.5,1)}
 @keyframes flap{0%,100%{transform:translateY(0) rotate(-8deg) scale(1,1)}50%{transform:translateY(-9px) rotate(-14deg) scale(1.04,.94)}}
 @keyframes hopw{0%,100%{margin-bottom:0}35%{margin-bottom:24px}}
 #dwalk .dsay{position:absolute;left:0;bottom:0;white-space:nowrap;background:#fff;color:var(--navy);border:2.5px solid var(--navy);border-radius:16px;padding:7px 12px;font-weight:800;font-size:13px;box-shadow:3px 3px 0 var(--navy);opacity:0;pointer-events:none;transition:opacity .2s;will-change:transform}
 #dwalk .dsay.on{opacity:1}
-#dwalk .dshadow{position:absolute;left:0;bottom:0;width:70px;height:9px;border-radius:50%;background:rgba(14,32,62,.22);will-change:transform;transition:opacity .2s}
-@media(max-width:700px){#dwalk .dw{width:76px}#dwalk .dshadow{width:50px}}
+#dwalk .dshadow{position:absolute;left:0;bottom:0;width:80px;height:9px;border-radius:50%;background:rgba(14,32,62,.22);will-change:transform;transition:opacity .2s}
+@media(max-width:700px){#dwalk .dw{width:88px}#dwalk .dshadow{width:50px}}
 @media(prefers-reduced-motion:reduce){#dwalk{display:none}}
