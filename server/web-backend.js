@@ -14,11 +14,23 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
+// Si no vienen variables de entorno, se leen de server/.env (que no se sube al repo).
+if (!process.env.VELARIS_URL && fs.existsSync(path.join(__dirname, '.env'))) {
+  for (const l of fs.readFileSync(path.join(__dirname, '.env'), 'utf8').split(/\r?\n/)) {
+    const m = l.match(/^\s*([A-Z_]+)\s*=\s*(.*?)\s*$/);
+    if (m && m[2] && process.env[m[1]] === undefined) process.env[m[1]] = m[2];
+  }
+}
+
 const PORT = Number(process.env.PORT || 4000);
 const VELARIS_URL = (process.env.VELARIS_URL || 'http://127.0.0.1:4010').replace(/\/$/, '');
 const CLIENT_ID = process.env.VELARIS_CLIENT_ID || 'dushi-web-test';
 const CLIENT_SECRET = process.env.VELARIS_CLIENT_SECRET || 'secreto-de-prueba-no-usar-en-produccion';
 const SIGN = process.env.VELARIS_SIGN === '1';
+// Dos formas de hablar con VELARIS:
+//  'catalogo'  = la API real (developers.velarisapp.com): solo lectura de productos y categorías.
+//  'propuesta' = la API de la propuesta del 31/10 (la que imita velaris-mock.js), con reservas y tickets.
+const MODO = process.env.VELARIS_API || (/(^|\.)velarisapp\.com$/i.test(new URL(VELARIS_URL).hostname) ? 'catalogo' : 'propuesta');
 const CATALOG_TTL_MS = Number(process.env.CATALOG_TTL_MS || 5 * 60 * 1000);
 const STOCK_POLL_MS = Number(process.env.STOCK_POLL_MS || 30 * 1000);
 const SITE_ROOT = path.resolve(__dirname, '..');
@@ -28,13 +40,13 @@ const META = JSON.parse(fs.readFileSync(path.join(__dirname, 'catalog-meta.json'
 let token = null; let tokenExp = 0;
 async function obtenerToken(forzar = false) {
   if (!forzar && token && Date.now() < tokenExp - 30000) return token;
-  const r = await fetch(`${VELARIS_URL}/api/v1/auth/token`, {
+  const r = await fetch(VELARIS_URL + (MODO === 'catalogo' ? '/api/oauth/token' : '/api/v1/auth/token'), {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ clientId: CLIENT_ID, clientSecret: CLIENT_SECRET }),
   });
   if (!r.ok) throw Object.assign(new Error('No se pudo autenticar con VELARIS'), { status: 502 });
   const j = await r.json();
-  token = j.access_token; tokenExp = Date.now() + j.expires_in * 1000;
+  token = j.accessToken || j.access_token; tokenExp = Date.now() + (j.expiresIn || j.expires_in) * 1000;
   return token;
 }
 async function velaris(metodo, ruta, { body, idem, query } = {}, reintento = true) {
@@ -51,7 +63,7 @@ async function velaris(metodo, ruta, { body, idem, query } = {}, reintento = tru
   if (r.status === 401 && reintento) { await obtenerToken(true); return velaris(metodo, ruta, { body, idem, query }, false); }
   const txt = await r.text(); let j = null;
   try { j = txt ? JSON.parse(txt) : null; } catch { /* sin JSON */ }
-  if (!r.ok) throw Object.assign(new Error(j?.error?.mensaje || `VELARIS respondió ${r.status}`), { status: r.status, detalle: j?.error });
+  if (!r.ok) throw Object.assign(new Error(j?.error?.mensaje || j?.error?.message || `VELARIS respondió ${r.status}`), { status: r.status, detalle: j?.error });
   return j;
 }
 
@@ -90,15 +102,66 @@ async function refrescarSkus(skus) {
   const j = await velaris('GET', '/existencias', { query: { skus: lista.join(',') } });
   for (const e of j.items) cache.stock.set(e.sku, e);
 }
+/* ----- API real de catálogo ----- */
+const PLAN = { PLAYA: 'playa', 'MONTAÑA': 'montana', VIAJE: 'viaje' };
+const GENERO = { HOMBRE: 'hombre', MUJER: 'mujer', 'NIÑA': 'ninos', 'NIÑO': 'ninos', FAMILIA: 'familia' };
+const urlImagen = (i) => (typeof i === 'string' ? i : i?.url || null);
+function normalizar(p) {
+  const attr = (v, pref) => v.attributes?.find((a) => a.name.startsWith(pref))?.value || null;
+  const variantes = (p.variants || []).map((v) => ({ codigo: v.sku, talla: attr(v, 'TALLA'), color: attr(v, 'COLOR'), genero: attr(v, 'GENERO'), disponible: !!v.available }));
+  const generos = [...new Set(variantes.map((v) => GENERO[v.genero]).filter(Boolean))];
+  const plan = PLAN[p.category?.code];
+  return {
+    id: p.id, sku: p.sku, nombre: p.name, marca: p.brand?.name || '', categoria: p.category?.name || '',
+    precio: p.price?.amount, precioAnterior: null, disponible: !!p.available, variantes,
+    planes: plan ? [plan] : [], generos: generos.length ? generos : ['all'],
+    imagen: urlImagen(p.images?.[0]) || urlImagen(p.variants?.find((v) => v.images?.length)?.images[0]),
+  };
+}
+async function paginasCatalogo(query, cadaProducto) {
+  let cursor = null; let j;
+  do {
+    j = await velaris('GET', '/catalog/products', { query: { limit: 500, ...query, ...(cursor ? { cursor } : {}) } });
+    j.data.forEach(cadaProducto); cursor = j.nextCursor;
+  } while (j.hasMore && cursor);
+  return j.serverTime;
+}
+async function cargarCatalogoReal() {
+  const nuevo = new Map();
+  cache.ultimoCambio = await paginasCatalogo({}, (p) => { if (p.status === 'active') nuevo.set(p.sku, normalizar(p)); });
+  cache.productos = nuevo; cache.catalogoEn = Date.now();
+}
+async function sondearCambiosReal() {
+  // updatedSince trae también lo que se desactivó o borró: eso se quita del sitio.
+  cache.ultimoCambio = await paginasCatalogo({ updatedSince: cache.ultimoCambio }, (p) => {
+    if (p.status === 'active') cache.productos.set(p.sku, normalizar(p)); else cache.productos.delete(p.sku);
+  }) || cache.ultimoCambio;
+}
+function vistaProductoReal(p) {
+  const m = META[p.sku] || {};
+  const tallas = [...new Set(p.variantes.map((v) => v.talla).filter((t) => t && !/^(UNI|MULTI)TALLA$/.test(t)))];
+  return {
+    sku: p.sku, nombre: p.nombre, marca: p.marca, categoria: p.categoria,
+    precio: p.precio, precioAnterior: null, descuentoPct: 0,
+    disponible: p.disponible, tallas, variantes: p.variantes.map((v) => ({ codigo: v.codigo, talla: v.talla, color: v.color, disponible: v.disponible })),
+    imagen: p.imagen || m.imagen || null, bg: m.bg || '#F3E6CF', planes: p.planes, generos: p.generos,
+    etiqueta: m.etiqueta || null, etiquetaSol: !!m.etiquetaSol,
+  };
+}
+
 async function mantener() {
   try {
-    if (!cache.productos.size || Date.now() - cache.catalogoEn > CATALOG_TTL_MS) await cargarCatalogo();
+    if (MODO === 'catalogo') {
+      if (!cache.productos.size || Date.now() - cache.catalogoEn > CATALOG_TTL_MS) await cargarCatalogoReal();
+      else await sondearCambiosReal();
+    } else if (!cache.productos.size || Date.now() - cache.catalogoEn > CATALOG_TTL_MS) await cargarCatalogo();
     else await sondearCambios();
     cache.error = null;
   } catch (e) { cache.error = e.message; console.warn('[backend] caché no actualizada:', e.message); }
 }
 
 function vistaProducto(p) {
+  if (MODO === 'catalogo') return vistaProductoReal(p);
   const m = META[p.sku] || {};
   const st = cache.stock.get(p.sku);
   const vars = p.variantes.map((v) => ({ codigo: v.codigo, talla: v.talla, color: v.color, disponible: st?.variantes.find((x) => x.codigo === v.codigo)?.disponible ?? 0 }));
@@ -165,6 +228,8 @@ async function api(req, res, url) {
   }
   if (limiteIP(ip)) return json(res, 429, { error: { codigo: 'DEMASIADAS_SOLICITUDES', mensaje: 'Demasiadas solicitudes. Espera un minuto.' } }, { 'Retry-After': '60' });
 
+  // La API real de VELARIS es solo de catálogo: todavía no permite apartar ni vender.
+  if (MODO === 'catalogo' && /^\/api\/(reservas|pedidos)(\/|$)/.test(p)) return json(res, 501, { error: { codigo: 'COMPRA_NO_DISPONIBLE', mensaje: 'La compra en línea todavía no está disponible.' } });
   try {
     if (req.method === 'POST' && p === '/api/reservas') {
       const b = await cuerpo(req); const items = itemsLimpios(b.items);
@@ -207,7 +272,7 @@ async function api(req, res, url) {
 }
 
 /* ================= archivos estáticos ================= */
-const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.mp4': 'video/mp4', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
+const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.mp4': 'video/mp4', '.svg': 'image/svg+xml', '.ico': 'image/x-icon' };
 function estatico(req, res, url) {
   let rel = decodeURIComponent(url.pathname); if (rel === '/') rel = '/index.html';
   const abs = path.resolve(SITE_ROOT, '.' + rel);
@@ -237,7 +302,7 @@ const server = http.createServer(async (req, res) => {
 
 if (require.main === module) {
   server.listen(PORT, '127.0.0.1', async () => {
-    console.log(`Sitio Dushi en http://127.0.0.1:${PORT}  ·  VELARIS: ${VELARIS_URL}`);
+    console.log(`Sitio Dushi en http://127.0.0.1:${PORT}  ·  VELARIS: ${VELARIS_URL} (${MODO})`);
     await mantener();
     setInterval(mantener, STOCK_POLL_MS).unref();
   });

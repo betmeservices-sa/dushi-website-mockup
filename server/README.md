@@ -37,3 +37,17 @@ Ayudas que existen **solo en el mock**: `POST /_mock/facturar/{pedido}` (simula 
 - Carrito y checkout en la interfaz (hoy «Agregar» solo suma el contador).
 - Autenticación para consultar pedidos, y datos de Crédito Fiscal (NIT, NRC) si se piden en el checkout.
 - Entregas: la propuesta de VELARIS las deja fuera.
+
+## VELARIS real (catálogo)
+
+La API que entregó VELARIS (https://developers.velarisapp.com) es de **solo lectura**: productos y categorías, sin cantidades, reservas ni tickets. El backend la detecta sola cuando `VELARIS_URL` apunta a `velarisapp.com` (o con `VELARIS_API=catalogo`):
+
+```bash
+cp .env.example .env   # y completar VELARIS_URL=https://velarisapi.velarisapp.com, Client ID y Client Secret
+npm run web            # lee server/.env si no hay variables exportadas
+```
+
+- Plan = categoría de VELARIS (PLAYA, MONTAÑA, VIAJE). Género = atributo GENERO de las variantes.
+- Disponibilidad: VELARIS solo dice si hay o no hay, así que el sitio no muestra «Quedan N».
+- Fotos: VELARIS las manda vacías por ahora. Mientras tanto se puede poner `imagen` por SKU en `catalog-meta.json`; sin foto sale el icono del plan.
+- `/api/reservas` y `/api/pedidos` responden 501 en este modo.

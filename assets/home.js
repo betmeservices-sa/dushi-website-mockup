@@ -24,6 +24,16 @@
       st={g:'all',p:'all',q:'',s:'rel'},cnt=document.getElementById('cnt');
   var orderIdx=cards.map(function(c,i){c.dataset.i=i;return c});
   function pressed(sel,attr,val){document.querySelectorAll(sel).forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset[attr]===val))})}
+  var PER=20,pg=1,lastKey='',pager=document.createElement('nav');
+  pager.className='pager';pager.setAttribute('aria-label','Páginas de productos');grid.after(pager);
+  function pintarPager(pages){
+    pager.hidden=pages<2;if(pages<2){pager.innerHTML='';return}
+    var h='<button class="tab" data-pg="'+(pg-1)+'"'+(pg===1?' disabled':'')+' aria-label="Página anterior">←</button>';
+    for(var i=1;i<=pages;i++)h+='<button class="tab" data-pg="'+i+'" aria-pressed="'+(i===pg)+'"'+(i===pg?' aria-current="page"':'')+' aria-label="Página '+i+'">'+i+'</button>';
+    pager.innerHTML=h+'<button class="tab" data-pg="'+(pg+1)+'"'+(pg===pages?' disabled':'')+' aria-label="Página siguiente">→</button>';
+  }
+  pager.addEventListener('click',function(e){var b=e.target.closest('[data-pg]');if(!b||b.disabled)return;
+    pg=+b.dataset.pg;apply();document.getElementById('productos').scrollIntoView({behavior:'smooth'})});
   function apply(){
     var n=0;
     cards.forEach(function(c){
@@ -31,14 +41,20 @@
       var okG=st.g==='all'||gs.indexOf('all')>-1||gs.indexOf(st.g)>-1;
       var okP=st.p==='all'||ps.indexOf(st.p)>-1;
       var okQ=!st.q||c.textContent.toLowerCase().indexOf(st.q)>-1;
-      c.hidden=!(okG&&okP&&okQ);if(!c.hidden)n++;});
+      c.dataset.ok=(okG&&okP&&okQ)?'1':'';if(c.dataset.ok)n++;});
     var sorted=cards.slice().sort(function(a,b){
       if(st.s==='asc')return a.dataset.pr-b.dataset.pr;
       if(st.s==='desc')return b.dataset.pr-a.dataset.pr;
       return a.dataset.i-b.dataset.i});
-    sorted.forEach(function(c){grid.appendChild(c)});
+    /* paginación: al cambiar filtro, búsqueda u orden se vuelve a la página 1 */
+    var key=[st.g,st.p,st.q,st.s].join('|');if(key!==lastKey){pg=1;lastKey=key}
+    var pages=Math.max(1,Math.ceil(n/PER));if(pg>pages)pg=pages;
+    var k0=0;sorted.forEach(function(c){
+      if(c.dataset.ok){c.hidden=!(k0>=(pg-1)*PER&&k0<pg*PER);k0++}else c.hidden=true;
+      grid.appendChild(c)});
+    pintarPager(pages);
     cnt.textContent=n+(n===1?' producto':' productos');
-    if(window.__f){var k=0;cards.forEach(function(c){c.classList.remove('pop');if(!c.hidden){c.style.setProperty('--i',k++);void c.offsetWidth;c.classList.add('pop')}})}
+    if(window.__f){var k=0;cards.forEach(function(c){c.classList.remove('pop');if(!c.hidden){c.style.setProperty('--i',Math.min(k++,11));void c.offsetWidth;c.classList.add('pop')}})}
     var e=document.getElementById('emp');
     if(!n&&!e){e=document.createElement('p');e.id='emp';e.className='empty';e.textContent='No encontramos nada con esos filtros. Prueba con otro plan o género.';grid.after(e)}
     if(n&&e)e.remove();
@@ -61,8 +77,12 @@
   function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function money(n){return '$'+Number(n).toFixed(2)}
   var HEART='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>';
+  /* sin foto: el icono del plan (los mismos de la sección de planes) */
+  var ICONO={playa:'<svg class="g" viewBox="0 0 52 52"><path d="M8 24a18 14 0 0 1 36 0Z" fill="#F96C4F" stroke="#0E203E" stroke-width="2.5" stroke-linejoin="round"/><path d="M26 24v20" stroke="#0E203E" stroke-width="3" stroke-linecap="round"/></svg>',
+    montana:'<svg class="g" viewBox="0 0 52 52"><path d="M4 44 22 14l9 14 6-8 11 24Z" fill="#1A9E9C" stroke="#0E203E" stroke-width="2.5" stroke-linejoin="round"/><circle cx="38" cy="12" r="5" fill="#FCA62A" stroke="#0E203E" stroke-width="2"/></svg>',
+    viaje:'<svg class="g" viewBox="0 0 52 52"><path d="M4 30 46 12l2 4-14 12 6 14-4 2-10-12-14 6Z" fill="#fff" stroke="#0E203E" stroke-width="2.5" stroke-linejoin="round" transform="rotate(8 26 26) scale(.95) translate(1 3)"/></svg>'};
   function cardHTML(p){
-    var art=p.imagen?'<img src="'+esc(p.imagen)+'" alt="'+esc(p.nombre)+'" loading="lazy">':((window.DUSHI_ART&&window.DUSHI_ART[p.sku])||'');
+    var art=p.imagen?'<img src="'+esc(p.imagen)+'" alt="'+esc(p.nombre)+'" loading="lazy">':((window.DUSHI_ART&&window.DUSHI_ART[p.sku])||ICONO[(p.planes||[])[0]]||'');
     var tag=p.etiqueta?'<span class="tag'+(p.etiquetaSol?' sol':'')+'">'+esc(p.etiqueta)+'</span>':'';
     var old=p.precioAnterior&&p.precioAnterior>p.precio?'<s>'+money(p.precioAnterior)+'</s>':'';
     var sizes=p.tallas&&p.tallas.length?'<span class="sizes">Tallas '+p.tallas.map(esc).join(' · ')+'</span>':'';
@@ -72,23 +92,23 @@
       +'<div class="row"><span class="price">'+money(p.precio)+old+'</span><button class="add">Agregar</button></div></div></article>';
   }
   function setStock(card,n){
+    if(n===true)n=Infinity;else if(n===false)n=0; /* VELARIS real solo dice si hay o no hay */
     var meta=card.querySelector('.meta'),old=meta.querySelector('.stock'),add=card.querySelector('.add');
     if(old)old.remove();
     card.classList.toggle('soldout',n===0);
     if(n===0||n<=3){var sp=document.createElement('span');sp.className='stock'+(n===0?' out':' low');sp.textContent=n===0?'Agotado por ahora':'Quedan '+n;meta.querySelector('h3').after(sp)}
     add.disabled=n===0;if(!add.classList.contains('done'))add.textContent=n===0?'Agotado':'Agregar';
   }
-  function mostrarVivo(){var l=document.getElementById('live');if(l)l.hidden=false}
   function renderCatalogo(data){
     var list=data.productos||[];if(!list.length)return;
     grid.innerHTML=list.map(cardHTML).join('');
     cards=[].slice.call(grid.querySelectorAll('.card'));
     cards.forEach(function(c,i){c.dataset.i=i;bindAdd(c.querySelector('.add'));bindFav(c.querySelector('.fav'));setStock(c,list[i].disponible)});
-    mostrarVivo();apply();
+    apply();
   }
   function actualizarStock(){
     fetch('/api/stock',{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject()}).then(function(d){
-      cards.forEach(function(c){var s=d.stock[c.dataset.sku];if(s)setStock(c,s.disponible)});mostrarVivo()}).catch(function(){});
+      cards.forEach(function(c){var s=d.stock[c.dataset.sku];if(s)setStock(c,s.disponible)})}).catch(function(){});
   }
   fetch('/api/catalogo').then(function(r){return r.ok?r.json():Promise.reject()}).then(function(d){
     renderCatalogo(d);setInterval(actualizarStock,30000)}).catch(function(){/* sin backend: se queda el catálogo de ejemplo */});
