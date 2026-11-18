@@ -106,6 +106,9 @@ async function refrescarSkus(skus) {
 const PLAN = { PLAYA: 'playa', 'MONTAÑA': 'montana', VIAJE: 'viaje' };
 const GENERO = { HOMBRE: 'hombre', MUJER: 'mujer', 'NIÑA': 'ninos', 'NIÑO': 'ninos', FAMILIA: 'familia' };
 const urlImagen = (i) => (typeof i === 'string' ? i : i?.url || null);
+const imagenPrincipal = (imgs) => urlImagen((imgs || []).find((i) => i?.isMain) || (imgs || [])[0]);
+// Precio de oferta: solo si hoy está dentro de su vigencia (startsOn / endsOn, hora de El Salvador).
+const ofertaVigente = (o) => { if (!o?.amount) return false; const t = Date.now(); const d = (x) => (x ? Date.parse(x.length === 10 ? x + 'T00:00:00-06:00' : x) : NaN); return !(t < d(o.startsOn)) && !(t > d(o.endsOn) + (o.endsOn?.length === 10 ? 86400000 : 0)); };
 function normalizar(p) {
   const attr = (v, pref) => v.attributes?.find((a) => a.name.startsWith(pref))?.value || null;
   const variantes = (p.variants || []).map((v) => ({ codigo: v.sku, talla: attr(v, 'TALLA'), color: attr(v, 'COLOR'), genero: attr(v, 'GENERO'), disponible: !!v.available }));
@@ -113,10 +116,10 @@ function normalizar(p) {
   const plan = PLAN[p.category?.code];
   return {
     id: p.id, sku: p.sku, nombre: p.name, marca: p.brand?.name || '', categoria: p.category?.name || '',
-    precio: p.price?.amount, precioAnterior: null, disponible: !!p.available, variantes,
+    precio: ofertaVigente(p.salePrice) ? p.salePrice.amount : p.price?.amount, precioAnterior: ofertaVigente(p.salePrice) ? p.price?.amount : null, disponible: !!p.available, variantes,
     descripcion: String(p.description || p.shortDescription || '').trim().slice(0, 600),
     planes: plan ? [plan] : [], generos: generos.length ? generos : ['all'],
-    imagen: urlImagen(p.images?.[0]) || urlImagen(p.variants?.find((v) => v.images?.length)?.images[0]),
+    imagen: imagenPrincipal(p.images) || imagenPrincipal(p.variants?.find((v) => v.images?.length)?.images),
   };
 }
 async function paginasCatalogo(query, cadaProducto) {
@@ -143,10 +146,10 @@ function vistaProductoReal(p) {
   const tallas = [...new Set(p.variantes.map((v) => v.talla).filter((t) => t && !/^(UNI|MULTI)TALLA$/.test(t)))];
   return {
     sku: p.sku, nombre: p.nombre, marca: p.marca, categoria: p.categoria, descripcion: p.descripcion || '',
-    precio: p.precio, precioAnterior: null, descuentoPct: 0,
+    precio: p.precio, precioAnterior: p.precioAnterior, descuentoPct: p.precioAnterior ? Math.floor((1 - p.precio / p.precioAnterior) * 100) : 0,
     disponible: p.disponible, tallas, variantes: p.variantes.map((v) => ({ codigo: v.codigo, talla: v.talla, color: v.color, disponible: v.disponible })),
     imagen: p.imagen || m.imagen || null, bg: m.bg || '#F3E6CF', planes: p.planes, generos: p.generos,
-    etiqueta: m.etiqueta || null, etiquetaSol: !!m.etiquetaSol,
+    etiqueta: p.precioAnterior ? `−${Math.floor((1 - p.precio / p.precioAnterior) * 100)}%` : (m.etiqueta || null), etiquetaSol: p.precioAnterior ? true : !!m.etiquetaSol,
   };
 }
 
