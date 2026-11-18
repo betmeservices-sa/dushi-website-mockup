@@ -16,9 +16,6 @@
     DushiCart.toast('Agregaste '+p.nombre+' al carrito');
     setTimeout(function(){b.classList.remove('done');b.textContent=b.disabled?'Agotado':'Agregar'},1600)})}
   document.querySelectorAll('.add').forEach(bindAdd);
-  function bindFav(b){b.addEventListener('click',function(){
-    var on=b.getAttribute('aria-pressed')==='true';b.setAttribute('aria-pressed',String(!on));b.classList.remove('beat');void b.offsetWidth;if(!on)b.classList.add('beat')})}
-  document.querySelectorAll('.fav').forEach(bindFav);
 
   /* filtros: género x plan x búsqueda x orden */
   var grid=document.getElementById('grid'),cards=[].slice.call(grid.querySelectorAll('.card')),
@@ -96,7 +93,6 @@
   /* ===== catálogo e inventario en vivo (backend -> VELARIS) ===== */
   function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function money(n){return '$'+Number(n).toFixed(2)}
-  var HEART='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>';
   /* sin foto: el icono del plan (los mismos de la sección de planes) */
   var ICONO={playa:'<svg class="g" viewBox="0 0 52 52"><path d="M8 24a18 14 0 0 1 36 0Z" fill="#F96C4F" stroke="#0E203E" stroke-width="2.5" stroke-linejoin="round"/><path d="M26 24v20" stroke="#0E203E" stroke-width="3" stroke-linecap="round"/></svg>',
     montana:'<svg class="g" viewBox="0 0 52 52"><path d="M4 44 22 14l9 14 6-8 11 24Z" fill="#1A9E9C" stroke="#0E203E" stroke-width="2.5" stroke-linejoin="round"/><circle cx="38" cy="12" r="5" fill="#FCA62A" stroke="#0E203E" stroke-width="2"/></svg>',
@@ -107,7 +103,7 @@
     var old=p.precioAnterior&&p.precioAnterior>p.precio?'<s>'+money(p.precioAnterior)+'</s>':'';
     var sizes=p.tallas&&p.tallas.length?'<span class="sizes">Tallas '+p.tallas.map(esc).join(' · ')+'</span>':'';
     return '<article class="card" data-sku="'+esc(p.sku)+'" data-c="'+esc((p.planes||[]).join(' '))+'" data-g="'+esc((p.generos||['all']).join(' '))+'" data-pr="'+p.precio+'">'
-      +'<div class="thumb" style="background:'+esc(p.bg)+'">'+art+tag+'<button class="fav" aria-pressed="false" aria-label="Guardar '+esc(p.nombre)+'">'+HEART+'</button></div>'
+      +'<div class="thumb" style="background:'+esc(p.bg)+'">'+art+tag+'</div>'
       +'<div class="meta"><span class="brand">'+esc(p.marca)+'</span><h3 tabindex="0" role="button" aria-haspopup="dialog">'+esc(p.nombre)+'</h3>'+sizes
       +'<div class="row"><span class="price">'+money(p.precio)+old+'</span><button class="add">Agregar</button></div></div></article>';
   }
@@ -124,7 +120,7 @@
     grid.innerHTML=list.map(cardHTML).join('');
     cards=[].slice.call(grid.querySelectorAll('.card'));
     PRODS=list.map(indexar);
-    cards.forEach(function(c,i){c._p=PRODS[i];c.dataset.i=i;bindAdd(c.querySelector('.add'));bindFav(c.querySelector('.fav'));setStock(c,list[i].disponible)});
+    cards.forEach(function(c,i){c._p=PRODS[i];c.dataset.i=i;bindAdd(c.querySelector('.add'));setStock(c,list[i].disponible)});
     apply();DushiCart.refresh(PRODS);sugerir();
   }
   function actualizarStock(){
@@ -140,7 +136,7 @@
   function artHTML(p){return p.imagen?'<img src="'+esc(p.imagen)+'" alt="'+esc(p.nombre)+'">':(p._svg||(window.DUSHI_ART&&window.DUSHI_ART[p.sku])||ICONO[(p.planes||[])[0]]||'')}
   DushiCart.config({art:artHTML,onAdd:bump,byKey:function(sku){return PRODS.filter(function(p){return p.sku===sku})[0]}});
   grid.addEventListener('click',function(e){
-    if(e.target.closest('.add,.fav'))return;
+    if(e.target.closest('.add'))return;
     var c=e.target.closest('.card');if(c&&(e.target.closest('.thumb')||e.target.closest('h3'))&&c._p)DushiCart.openProd(c._p)});
   grid.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.matches('h3')){var c=e.target.closest('.card');if(c&&c._p)DushiCart.openProd(c._p)}});
 
