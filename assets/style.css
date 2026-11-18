@@ -504,13 +504,13 @@ body:has(dialog[open]){overflow:hidden}
 /* Dushi en la hielera: pulgar que se levanta */
 .dz{position:absolute;left:2%;bottom:5%;width:96%;height:auto;aspect-ratio:520/454;display:block}
 /* Dushi caminando por la calle, con un icono atrás (montaña / playa) */
-#dworld{position:fixed;left:0;bottom:0;z-index:60;width:280px;height:150px;pointer-events:none}
+#dworld{position:fixed;left:0;bottom:0;z-index:60;width:290px;height:170px;pointer-events:none}
 #dworld .stage{position:absolute;inset:0}
-#dworld .road{position:absolute;left:0;bottom:0;width:260px;height:16px;background:#0E203E;border-top:2px solid #F3E6CF;box-sizing:border-box;border-radius:0 10px 0 0;overflow:hidden}
+#dworld .road{position:absolute;left:0;bottom:0;width:270px;height:16px;background:#0E203E;border-top:2px solid #F3E6CF;box-sizing:border-box;border-radius:0 10px 0 0;overflow:hidden}
 #dworld .ly{position:absolute;left:0;top:0;height:100%;width:200%;animation:scroll var(--d) linear infinite}
 @keyframes scroll{to{transform:translateX(-50%)}}
 #dworld.still .ly{animation:none}
-#dworld .ic{position:absolute;left:2px;bottom:34px;width:150px;opacity:0;transform:scale(.8) translateY(8px);transform-origin:50% 100%;transition:opacity .6s ease,transform .6s cubic-bezier(.3,1.4,.5,1)}
+#dworld .ic{position:absolute;left:78px;bottom:32px;width:172px;opacity:0;transform:scale(.8) translateY(8px);transform-origin:50% 100%;transition:opacity .6s ease,transform .6s cubic-bezier(.3,1.4,.5,1)}
 #dworld .ic.on{opacity:1;transform:none}
 #dworld .ic svg{display:block;width:100%;height:auto;filter:drop-shadow(2px 0 0 #F3E6CF) drop-shadow(-2px 0 0 #F3E6CF) drop-shadow(0 2px 0 #F3E6CF) drop-shadow(0 -2px 0 #F3E6CF)}
 #dworld .dw{position:absolute;left:38px;bottom:12px;width:84px;pointer-events:auto;cursor:pointer;background:none;border:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -524,6 +524,11 @@ body:has(dialog[open]){overflow:hidden}
 @keyframes hopw{0%,100%{margin-bottom:0}35%{margin-bottom:22px}}
 #dworld .dsay{position:absolute;left:60px;bottom:160px;white-space:nowrap;background:#fff;color:#0E203E;border:2.5px solid #0E203E;border-radius:16px;padding:7px 12px;font-weight:800;font-size:13px;box-shadow:3px 3px 0 #0E203E;opacity:0;pointer-events:none;transition:opacity .2s}
 #dworld .dsay.on{opacity:1}
-@media(max-width:700px){#dworld{width:210px;height:112px}#dworld .road{width:196px;height:12px}#dworld .ic{left:2px;bottom:24px;width:112px}#dworld .dw{left:28px;bottom:9px;width:62px}#dworld .dsay{left:40px;bottom:120px;font-size:12px}}
+@media(max-width:700px){#dworld{width:210px;height:112px}#dworld .road{width:196px;height:12px}#dworld .ic{left:56px;bottom:22px;width:132px}#dworld .dw{left:28px;bottom:9px;width:62px}#dworld .dsay{left:40px;bottom:120px;font-size:12px}}
 @media print{#dworld{display:none}}
-#dworld .ic-b{left:34px}
+#dworld .ic-b{left:78px}
+
+#dworld .ic .nm{position:absolute;left:50%;bottom:-20px;margin-left:-46px;white-space:nowrap;font-weight:800;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#FCA62A;background:#0E203E;border:2px solid #F3E6CF;border-radius:999px;padding:3px 9px;opacity:0;transform:translateY(6px);transition:opacity .4s .5s,transform .4s .5s}
+#dworld .ic.on .nm{opacity:1;transform:none}
+#dworld .ic svg{filter:drop-shadow(2px 0 0 #F3E6CF) drop-shadow(-2px 0 0 #F3E6CF) drop-shadow(0 2px 0 #F3E6CF) drop-shadow(0 -2px 0 #F3E6CF)}
+@media(max-width:700px){#dworld .ic .nm{font-size:9px;margin-left:-38px;bottom:-16px}}
